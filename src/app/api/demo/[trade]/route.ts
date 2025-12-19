@@ -9,7 +9,7 @@ interface TradeCategory {
   demo_location: string | null;
   demo_phone: string | null;
   demo_services: string | null;
-  demo_site_config: string | null;
+  demo_site_config: string | object | null;
 }
 
 export async function GET(
@@ -40,8 +40,10 @@ export async function GET(
       );
     }
 
-    // Parse the site config
-    const siteConfig = JSON.parse(tradeData.demo_site_config);
+    // Parse the site config (may already be an object from MySQL JSON column)
+    const siteConfig = typeof tradeData.demo_site_config === 'string'
+      ? JSON.parse(tradeData.demo_site_config)
+      : tradeData.demo_site_config;
 
     return NextResponse.json({
       trade: tradeData.name,
