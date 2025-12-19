@@ -1,8 +1,17 @@
 import Stripe from "stripe";
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2025-12-15.clover",
-});
+// Only initialize Stripe if the key is configured
+const stripeKey = process.env.STRIPE_SECRET_KEY;
+export const stripe = stripeKey
+  ? new Stripe(stripeKey, { apiVersion: "2025-12-15.clover" })
+  : null;
+
+function getStripe(): Stripe {
+  if (!stripe) {
+    throw new Error("Stripe is not configured. Please add STRIPE_SECRET_KEY to environment variables.");
+  }
+  return stripe;
+}
 
 export const PLANS = {
   live: {
@@ -22,7 +31,7 @@ export const PLANS = {
 };
 
 export async function createCheckoutSession(userId: string, userEmail: string) {
-  const session = await stripe.checkout.sessions.create({
+  const session = await getStripe().checkout.sessions.create({
     customer_email: userEmail,
     payment_method_types: ["card"],
     line_items: [
@@ -43,7 +52,7 @@ export async function createCheckoutSession(userId: string, userEmail: string) {
 }
 
 export async function createPortalSession(customerId: string) {
-  const session = await stripe.billingPortal.sessions.create({
+  const session = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/billing`,
   });
