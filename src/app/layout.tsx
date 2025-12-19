@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "WebSights - Professional Websites for Tradespeople",
+  title: "TradeVista - Professional Websites for Tradespeople",
   description: "Build a stunning website for your trade business in minutes. AI-powered website builder for plumbers, electricians, builders and more.",
   keywords: ["website builder", "tradespeople", "plumber website", "electrician website", "builder website"],
 };

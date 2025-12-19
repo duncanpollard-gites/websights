@@ -1,9 +1,9 @@
-# WebSights - Project Notes for Claude
+# TradeVista - Project Notes for Claude
 
 ## What is this?
 AI-powered website builder for UK tradespeople (plumbers, electricians, builders, etc.). Think Lovable/Bolt but niche-targeted for trades with industry-specific features.
 
-**Domain:** websights.co.uk (owned since 1997 - good SEO history)
+**Domain:** tradevista.co.uk (owned since 1997 - good SEO history)
 **Owner:** Duncan Pollard (also owns qlgmedia.co.uk for lead gen)
 
 ## Business Model
@@ -17,7 +17,7 @@ AI-powered website builder for UK tradespeople (plumbers, electricians, builders
 - **Auth:** Custom JWT-based (bcryptjs for passwords, jsonwebtoken for tokens)
 - **Hosting:** Local dev on MAMP, production TBD (likely Vercel + Digital Ocean)
 
-## Database Schema (MySQL: `websights`)
+## Database Schema (MySQL: `tradevista`)
 ```sql
 users - id, email, password_hash, name, trade, business_name, location, phone, services, existing_website, competitors, created_at, updated_at
 sites - id, user_id, subdomain, custom_domain, site_config (JSON), status (draft/live), created_at, updated_at
@@ -26,7 +26,7 @@ sessions - id, user_id, token, expires_at, created_at
 
 ## Project Structure
 ```
-/Applications/MAMP/htdocs/websights/
+/Applications/MAMP/htdocs/tradevista/
 ├── src/
 │   ├── app/
 │   │   ├── page.tsx                    # Homepage (hero, features, pricing, industries)
@@ -78,7 +78,7 @@ sessions - id, user_id, token, expires_at, created_at
 - [x] **Editor UI** - Full dashboard with sidebar, preview panel, and AI chat
 - [x] **Stripe Integration** - Checkout, webhooks, billing portal
 - [x] **Domain Management** - Cloudflare API, domain suggestions, DNS instructions
-- [x] GitHub repo: https://github.com/duncanpollard-gites/websights
+- [x] GitHub repo: https://github.com/duncanpollard-gites/tradevista
 
 ## TODO - Next Steps
 1. **Industry Landing Pages** - /industries/plumbers, /electricians etc. for FB ad targeting
@@ -100,13 +100,13 @@ sessions - id, user_id, token, expires_at, created_at
 ## Useful Commands
 ```bash
 # Start dev server
-cd /Applications/MAMP/htdocs/websights && npm run dev
+cd /Applications/MAMP/htdocs/tradevista && npm run dev
 
 # MySQL CLI
-/Applications/MAMP/Library/bin/mysql80/bin/mysql -u root -proot -P 8889 -h 127.0.0.1 websights
+/Applications/MAMP/Library/bin/mysql80/bin/mysql -u root -proot -P 8889 -h 127.0.0.1 tradevista
 
 # Check users
-/Applications/MAMP/Library/bin/mysql80/bin/mysql -u root -proot -P 8889 -h 127.0.0.1 -e "SELECT * FROM websights.users;"
+/Applications/MAMP/Library/bin/mysql80/bin/mysql -u root -proot -P 8889 -h 127.0.0.1 -e "SELECT * FROM tradevista.users;"
 ```
 
 ## Design Decisions

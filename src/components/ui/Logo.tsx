@@ -14,12 +14,12 @@ export default function Logo({ className = "", size = "md" }: LogoProps) {
 
   return (
     <Link href="/" className={`flex items-center gap-2 ${className}`}>
-      {/* Eye/Globe Icon */}
+      {/* Logo Icon */}
       <div className={`${sizes[size].icon} relative`}>
         <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          {/* Outer circle (eye outline) */}
+          {/* Outer circle */}
           <circle cx="20" cy="20" r="16" stroke="#2563eb" strokeWidth="2.5" fill="none"/>
-          {/* Inner circle (pupil) */}
+          {/* Inner circle */}
           <circle cx="20" cy="20" r="6" fill="#2563eb"/>
           {/* Globe lines */}
           <ellipse cx="20" cy="20" rx="16" ry="8" stroke="#2563eb" strokeWidth="1.5" fill="none"/>
@@ -28,8 +28,8 @@ export default function Logo({ className = "", size = "md" }: LogoProps) {
       </div>
       {/* Text */}
       <span className={`${sizes[size].text} font-bold`}>
-        <span className="text-gray-900">Web</span>
-        <span className="text-blue-600">Sights</span>
+        <span className="text-gray-900">Trade</span>
+        <span className="text-blue-600">Vista</span>
       </span>
     </Link>
   );

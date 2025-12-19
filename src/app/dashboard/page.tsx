@@ -134,9 +134,9 @@ export default function DashboardPage() {
         <div className="p-4 border-b border-gray-200">
           <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">W</span>
+              <span className="text-white font-bold text-lg">T</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">WebSights</span>
+            <span className="text-xl font-bold text-gray-900">TradeVista</span>
           </Link>
         </div>
 
@@ -201,7 +201,7 @@ export default function DashboardPage() {
               <h1 className="text-xl font-semibold text-gray-900">Site Editor</h1>
               {site && (
                 <p className="text-sm text-gray-500">
-                  {site.subdomain}.websights.co.uk
+                  {site.subdomain}.tradevista.co.uk
                   <span className={`ml-2 px-2 py-0.5 rounded text-xs font-medium ${
                     site.status === "live"
                       ? "bg-green-100 text-green-700"
@@ -258,7 +258,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex-1 mx-4">
                     <div className="bg-white rounded px-3 py-1 text-sm text-gray-500 text-center">
-                      {site.customDomain || `${site.subdomain}.websights.co.uk`}
+                      {site.customDomain || `${site.subdomain}.tradevista.co.uk`}
                     </div>
                   </div>
                 </div>

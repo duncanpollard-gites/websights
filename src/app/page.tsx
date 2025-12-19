@@ -291,7 +291,7 @@ export default function Home() {
             Ready to get more customers?
           </h2>
           <p className="text-xl text-blue-100 mb-8">
-            Join hundreds of tradespeople who've built their online presence with WebSights.
+            Join hundreds of tradespeople who've built their online presence with TradeVista.
           </p>
           <Link
             href="/signup"

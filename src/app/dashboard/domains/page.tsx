@@ -151,7 +151,7 @@ export default function DomainsPage() {
           <h2 className="font-semibold text-gray-900 mb-4">Your Current Domain</h2>
           <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-lg">
             <Globe className="w-5 h-5 text-gray-400" />
-            <span className="text-gray-700 font-mono">yourbusiness.websights.co.uk</span>
+            <span className="text-gray-700 font-mono">yourbusiness.tradevista.co.uk</span>
             <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
               Active
             </span>
@@ -266,7 +266,7 @@ export default function DomainsPage() {
 
           {!configured && (
             <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-800 text-sm">
-              Domain availability checking not configured. Add Cloudflare API keys to enable.
+              Domain availability checking not configured. Contact support to enable.
             </div>
           )}
 

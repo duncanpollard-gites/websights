@@ -16,7 +16,7 @@ export default function Footer() {
                   <line x1="20" y1="4" x2="20" y2="36" stroke="#3b82f6" strokeWidth="1.5"/>
                 </svg>
               </div>
-              <span className="text-xl font-bold text-white">WebSights</span>
+              <span className="text-xl font-bold text-white">TradeVista</span>
             </Link>
             <p className="text-sm text-gray-400">
               Professional websites for tradespeople, built in minutes. Since 1997.
@@ -101,7 +101,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-sm text-gray-400">
-          <p>&copy; {new Date().getFullYear()} WebSights. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} TradeVista. All rights reserved.</p>
         </div>
       </div>
     </footer>

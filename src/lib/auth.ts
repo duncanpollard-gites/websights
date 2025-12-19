@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { query } from "./db";
 import { cookies } from "next/headers";
 
-const JWT_SECRET = process.env.JWT_SECRET || "websights-dev-secret-change-in-production";
+const JWT_SECRET = process.env.JWT_SECRET || "tradevista-dev-secret-change-in-production";
 
 export interface User {
   id: string;

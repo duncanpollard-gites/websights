@@ -1,6 +1,29 @@
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { suggestDomains, checkDomainAvailability } from "@/lib/cloudflare";
+
+// Generate domain suggestions from business name
+function suggestDomains(businessName: string): string[] {
+  const cleanName = businessName
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, "");
+
+  const suggestions: string[] = [];
+  const tlds = [".co.uk", ".uk", ".com"];
+
+  // Basic suggestions
+  tlds.forEach((tld) => {
+    suggestions.push(`${cleanName}${tld}`);
+  });
+
+  // With common suffixes for trades
+  const suffixes = ["services", "pro", "uk"];
+  suffixes.forEach((suffix) => {
+    suggestions.push(`${cleanName}${suffix}.co.uk`);
+  });
+
+  return suggestions.slice(0, 6); // Return top 6 suggestions
+}
 
 export async function GET() {
   try {
@@ -12,33 +35,14 @@ export async function GET() {
     const businessName = user.business_name || "mybusiness";
     const suggestions = suggestDomains(businessName);
 
-    // Check if Cloudflare is configured
-    if (!process.env.CLOUDFLARE_API_TOKEN || !process.env.CLOUDFLARE_ACCOUNT_ID) {
-      // Return suggestions without availability check
-      return NextResponse.json({
-        suggestions: suggestions.map((domain) => ({
-          domain,
-          available: null, // Unknown
-        })),
-        configured: false,
-      });
-    }
-
-    // Check availability for each suggestion (in parallel)
-    const results = await Promise.all(
-      suggestions.map(async (domain) => {
-        try {
-          const available = await checkDomainAvailability(domain);
-          return { domain, available };
-        } catch {
-          return { domain, available: null };
-        }
-      })
-    );
-
+    // Return suggestions without availability check for now
+    // Domain availability checking would require a registrar API
     return NextResponse.json({
-      suggestions: results,
-      configured: true,
+      suggestions: suggestions.map((domain) => ({
+        domain,
+        available: null, // Unknown - checking coming soon
+      })),
+      configured: false,
     });
   } catch (error) {
     console.error("Domain suggest error:", error);

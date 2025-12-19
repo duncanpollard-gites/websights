@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { checkDomainAvailability } from "@/lib/cloudflare";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,20 +13,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Domain is required" }, { status: 400 });
     }
 
-    // Check if Cloudflare is configured
-    if (!process.env.CLOUDFLARE_API_TOKEN || !process.env.CLOUDFLARE_ACCOUNT_ID) {
-      return NextResponse.json({
-        domain,
-        available: null,
-        error: "Domain checking not configured",
-      });
-    }
-
-    const available = await checkDomainAvailability(domain);
-
+    // Domain availability checking would require a domain registrar API
+    // For now, return null to indicate checking isn't configured
     return NextResponse.json({
       domain,
-      available,
+      available: null,
+      message: "Domain availability checking coming soon",
     });
   } catch (error) {
     console.error("Domain check error:", error);
