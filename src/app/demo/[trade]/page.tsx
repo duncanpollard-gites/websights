@@ -8,7 +8,13 @@ import { SiteConfig } from "@/lib/ai";
 interface DemoData {
   trade: string;
   slug: string;
-  config: SiteConfig;
+  config: SiteConfig & {
+    images?: {
+      hero?: string;
+      about?: string;
+      gallery?: string[];
+    };
+  };
 }
 
 export default function DemoPage({
@@ -153,29 +159,44 @@ export default function DemoPage({
                 return (
                   <section
                     key={section.id}
-                    className="py-24 px-6 text-center"
-                    style={{ backgroundColor: colors.primary }}
+                    className="relative py-32 md:py-40 px-6 text-center overflow-hidden"
                   >
-                    <div className="max-w-4xl mx-auto">
-                      <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                    {/* Background Image */}
+                    {config.images?.hero && (
+                      <div
+                        className="absolute inset-0 bg-cover bg-center"
+                        style={{ backgroundImage: `url(${config.images.hero})` }}
+                      />
+                    )}
+                    {/* Overlay */}
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        backgroundColor: colors.primary,
+                        opacity: config.images?.hero ? 0.85 : 1
+                      }}
+                    />
+                    {/* Content */}
+                    <div className="relative max-w-4xl mx-auto z-10">
+                      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 drop-shadow-lg">
                         {section.title || config.businessName}
                       </h1>
-                      <p className="text-xl text-white/90 mb-4">
+                      <p className="text-xl md:text-2xl text-white/95 mb-4 drop-shadow">
                         {config.tagline}
                       </p>
-                      <p className="text-white/80 max-w-2xl mx-auto mb-10">
+                      <p className="text-white/85 max-w-2xl mx-auto mb-10 text-lg drop-shadow">
                         {section.content}
                       </p>
                       <div className="flex flex-wrap gap-4 justify-center">
                         <button
-                          className="px-8 py-4 rounded-full font-semibold text-lg"
+                          className="px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-shadow"
                           style={{ backgroundColor: colors.accent, color: "white" }}
                         >
                           Get a Free Quote
                         </button>
                         <a
                           href={`tel:${config.phone}`}
-                          className="px-8 py-4 bg-white rounded-full font-semibold text-lg"
+                          className="px-8 py-4 bg-white rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-shadow"
                           style={{ color: colors.primary }}
                         >
                           Call {config.phone}
@@ -231,43 +252,63 @@ export default function DemoPage({
               case "about":
                 return (
                   <section key={section.id} className="py-20 px-6 bg-white">
-                    <div className="max-w-4xl mx-auto">
-                      <h2
-                        className="text-3xl md:text-4xl font-bold text-center mb-8"
-                        style={{ color: colors.primary }}
-                      >
-                        {section.title}
-                      </h2>
-                      <p className="text-lg text-gray-600 text-center leading-relaxed">
-                        {section.content || config.about}
-                      </p>
-                      <div className="mt-12 grid grid-cols-3 gap-8 text-center">
-                        <div>
-                          <p
-                            className="text-4xl font-bold mb-2"
+                    <div className="max-w-6xl mx-auto">
+                      <div className={`grid ${config.images?.about ? 'lg:grid-cols-2' : ''} gap-12 items-center`}>
+                        {/* Image */}
+                        {config.images?.about && (
+                          <div className="relative">
+                            <div
+                              className="aspect-[4/3] rounded-2xl bg-cover bg-center shadow-xl"
+                              style={{ backgroundImage: `url(${config.images.about})` }}
+                            />
+                            <div
+                              className="absolute -bottom-4 -right-4 w-24 h-24 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg"
+                              style={{ backgroundColor: colors.primary }}
+                            >
+                              15+<br/>Years
+                            </div>
+                          </div>
+                        )}
+                        {/* Content */}
+                        <div className={config.images?.about ? '' : 'max-w-4xl mx-auto text-center'}>
+                          <h2
+                            className={`text-3xl md:text-4xl font-bold mb-6 ${config.images?.about ? '' : 'text-center'}`}
                             style={{ color: colors.primary }}
                           >
-                            15+
+                            {section.title}
+                          </h2>
+                          <p className={`text-lg text-gray-600 leading-relaxed mb-8 ${config.images?.about ? '' : 'text-center'}`}>
+                            {section.content || config.about}
                           </p>
-                          <p className="text-gray-500">Years Experience</p>
-                        </div>
-                        <div>
-                          <p
-                            className="text-4xl font-bold mb-2"
-                            style={{ color: colors.primary }}
-                          >
-                            500+
-                          </p>
-                          <p className="text-gray-500">Happy Customers</p>
-                        </div>
-                        <div>
-                          <p
-                            className="text-4xl font-bold mb-2"
-                            style={{ color: colors.primary }}
-                          >
-                            100%
-                          </p>
-                          <p className="text-gray-500">Satisfaction</p>
+                          <div className={`grid grid-cols-3 gap-6 ${config.images?.about ? '' : 'max-w-md mx-auto'}`}>
+                            <div className={config.images?.about ? '' : 'text-center'}>
+                              <p
+                                className="text-3xl md:text-4xl font-bold mb-1"
+                                style={{ color: colors.primary }}
+                              >
+                                15+
+                              </p>
+                              <p className="text-gray-500 text-sm">Years Experience</p>
+                            </div>
+                            <div className={config.images?.about ? '' : 'text-center'}>
+                              <p
+                                className="text-3xl md:text-4xl font-bold mb-1"
+                                style={{ color: colors.primary }}
+                              >
+                                500+
+                              </p>
+                              <p className="text-gray-500 text-sm">Happy Customers</p>
+                            </div>
+                            <div className={config.images?.about ? '' : 'text-center'}>
+                              <p
+                                className="text-3xl md:text-4xl font-bold mb-1"
+                                style={{ color: colors.primary }}
+                              >
+                                100%
+                              </p>
+                              <p className="text-gray-500 text-sm">Satisfaction</p>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
