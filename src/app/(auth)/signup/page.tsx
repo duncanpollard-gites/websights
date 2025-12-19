@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight, Check, Loader2 } from "lucide-react";
 
 const trades = [
   { id: "plumber", name: "Plumber", icon: "🔧" },
@@ -40,7 +41,10 @@ interface FormData {
 }
 
 export default function SignupPage() {
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const [formData, setFormData] = useState<FormData>({
     trade: "",
     businessName: "",
@@ -55,6 +59,7 @@ export default function SignupPage() {
 
   const updateFormData = (field: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setError("");
   };
 
   const nextStep = () => {
@@ -70,10 +75,30 @@ export default function SignupPage() {
   };
 
   const handleSubmit = async () => {
-    // TODO: Submit to Supabase
-    console.log("Form submitted:", formData);
-    // Redirect to dashboard/builder
-    window.location.href = "/dashboard";
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Something went wrong");
+        setLoading(false);
+        return;
+      }
+
+      // Success - redirect to dashboard
+      router.push("/dashboard");
+    } catch {
+      setError("Network error. Please try again.");
+      setLoading(false);
+    }
   };
 
   const canProceed = () => {
@@ -381,6 +406,11 @@ export default function SignupPage() {
                 </Link>
                 .
               </p>
+              {error && (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -414,15 +444,24 @@ export default function SignupPage() {
           ) : (
             <button
               onClick={handleSubmit}
-              disabled={!canProceed()}
+              disabled={!canProceed() || loading}
               className={`flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-colors ${
-                canProceed()
+                canProceed() && !loading
                   ? "bg-blue-600 text-white hover:bg-blue-700"
                   : "bg-gray-200 text-gray-400 cursor-not-allowed"
               }`}
             >
-              Build My Website
-              <ArrowRight className="w-4 h-4" />
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Build My Website
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           )}
         </div>
