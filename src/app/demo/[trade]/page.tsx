@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { Loader2, X, Sparkles, ArrowRight, Phone } from "lucide-react";
 import { SiteConfig } from "@/lib/ai";
+import QuoteGenerator from "@/components/demo/QuoteGenerator";
 
 interface DemoData {
   trade: string;
@@ -445,6 +446,16 @@ export default function DemoPage({
                 return null;
             }
           })}
+
+        {/* AI Quote Generator - Killer Feature */}
+        <QuoteGenerator
+          trade={data.slug}
+          businessName={config.businessName}
+          location={config.location}
+          phone={config.phone}
+          primaryColor={colors.primary}
+          accentColor={colors.accent}
+        />
       </main>
 
       {/* Footer */}
