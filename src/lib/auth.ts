@@ -16,6 +16,8 @@ export interface User {
   services: string | null;
   existing_website: string | null;
   competitors: string | null;
+  is_founder: boolean;
+  founder_signup_number: number | null;
   created_at: Date;
 }
 
@@ -49,12 +51,14 @@ export async function createUser(data: {
   services?: string;
   existingWebsite?: string;
   competitors?: string;
+  isFounder?: boolean;
+  founderNumber?: number;
 }): Promise<User> {
   const passwordHash = await hashPassword(data.password);
 
   await query(
-    `INSERT INTO users (email, password_hash, trade, business_name, location, phone, services, existing_website, competitors)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO users (email, password_hash, trade, business_name, location, phone, services, existing_website, competitors, is_founder, founder_signup_number)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       data.email,
       passwordHash,
@@ -65,11 +69,26 @@ export async function createUser(data: {
       data.services || null,
       data.existingWebsite || null,
       data.competitors || null,
+      data.isFounder || false,
+      data.founderNumber || null,
     ]
   );
 
   const users = await query<User[]>("SELECT * FROM users WHERE email = ?", [data.email]);
   return users[0];
+}
+
+const MAX_FOUNDERS = 100;
+
+export async function checkFounderAvailability(): Promise<{ available: boolean; nextNumber: number }> {
+  const [result] = await query<{ count: number }[]>(
+    "SELECT COUNT(*) as count FROM users WHERE is_founder = 1"
+  );
+  const currentCount = result?.count || 0;
+  return {
+    available: currentCount < MAX_FOUNDERS,
+    nextNumber: currentCount + 1,
+  };
 }
 
 export async function getUserByEmail(email: string): Promise<(User & { password_hash: string }) | null> {

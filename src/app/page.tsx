@@ -1,14 +1,15 @@
 import Link from "next/link";
 import Header from "@/components/marketing/Header";
 import Footer from "@/components/marketing/Footer";
+import FounderBanner from "@/components/marketing/FounderBanner";
 
 const trades = [
-  { name: "Plumbers", slug: "plumbers", icon: "🔧" },
-  { name: "Electricians", slug: "electricians", icon: "⚡" },
-  { name: "Builders", slug: "builders", icon: "🏗️" },
-  { name: "Roofers", slug: "roofers", icon: "🏠" },
-  { name: "Painters", slug: "painters-decorators", icon: "🎨" },
-  { name: "Landscapers", slug: "landscapers", icon: "🌳" },
+  { name: "Plumbers", slug: "plumber", icon: "🔧" },
+  { name: "Electricians", slug: "electrician", icon: "⚡" },
+  { name: "Builders", slug: "builder", icon: "🏗️" },
+  { name: "Roofers", slug: "roofer", icon: "🏠" },
+  { name: "Painters", slug: "painter", icon: "🎨" },
+  { name: "Landscapers", slug: "landscaper", icon: "🌳" },
 ];
 
 const features = [
@@ -94,6 +95,7 @@ const steps = [
 export default function Home() {
   return (
     <div className="min-h-screen">
+      <FounderBanner />
       <Header />
 
       {/* Hero Section */}
@@ -116,10 +118,10 @@ export default function Home() {
               Build Your Free Site
             </Link>
             <Link
-              href="/examples"
+              href="/demo"
               className="bg-white text-gray-900 px-8 py-4 rounded-full font-semibold text-lg border border-gray-200 hover:border-gray-300 transition-colors"
             >
-              See Examples
+              See Demo Sites
             </Link>
           </div>
           <p className="text-sm text-gray-500 mt-4">
@@ -162,7 +164,7 @@ export default function Home() {
             {trades.map((trade) => (
               <Link
                 key={trade.slug}
-                href={`/industries/${trade.slug}`}
+                href={`/demo/${trade.slug}`}
                 className="bg-gray-50 hover:bg-blue-50 rounded-xl p-6 text-center transition-colors group"
               >
                 <span className="text-4xl mb-3 block">{trade.icon}</span>
@@ -171,6 +173,14 @@ export default function Home() {
                 </span>
               </Link>
             ))}
+          </div>
+          <div className="text-center mt-8">
+            <Link
+              href="/demo"
+              className="text-blue-600 font-medium hover:text-blue-700"
+            >
+              View all 15 trade demos →
+            </Link>
           </div>
         </div>
       </section>

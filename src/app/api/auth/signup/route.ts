@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createUser, generateToken, getUserByEmail } from "@/lib/auth";
+import { createUser, generateToken, getUserByEmail, checkFounderAvailability } from "@/lib/auth";
 import { cookies } from "next/headers";
 
 export async function POST(request: NextRequest) {
@@ -31,7 +31,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create user
+    // Check if founder spots are available
+    const founderStatus = await checkFounderAvailability();
+
+    // Create user with founder status if available
     const user = await createUser({
       email,
       password,
@@ -42,6 +45,8 @@ export async function POST(request: NextRequest) {
       services,
       existingWebsite,
       competitors,
+      isFounder: founderStatus.available,
+      founderNumber: founderStatus.available ? founderStatus.nextNumber : undefined,
     });
 
     // Generate token and set cookie
@@ -62,6 +67,8 @@ export async function POST(request: NextRequest) {
         email: user.email,
         trade: user.trade,
         businessName: user.business_name,
+        isFounder: user.is_founder,
+        founderNumber: user.founder_signup_number,
       },
     });
   } catch (error) {
