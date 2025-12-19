@@ -14,6 +14,8 @@ import {
   Loader2,
   Menu,
   X,
+  FileText,
+  Activity,
 } from "lucide-react";
 
 interface AdminUser {
@@ -25,6 +27,8 @@ interface AdminUser {
 const navItems = [
   { href: "/admin", icon: BarChart3, label: "Dashboard" },
   { href: "/admin/customers", icon: Users, label: "Customers" },
+  { href: "/admin/cms", icon: FileText, label: "Content" },
+  { href: "/admin/logs", icon: Activity, label: "Activity Logs" },
   { href: "/admin/settings", icon: Settings, label: "API Settings" },
   { href: "/admin/products", icon: Package, label: "Print Products" },
   { href: "/admin/domains", icon: Globe, label: "Domains" },

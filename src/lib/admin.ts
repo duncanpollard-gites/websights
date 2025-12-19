@@ -95,6 +95,28 @@ export async function getCurrentAdmin(): Promise<AdminUser | null> {
   return users[0] || null;
 }
 
+// Verify admin auth from request (for API routes)
+export async function verifyAdminAuth(request: Request): Promise<AdminUser | null> {
+  // Try to get token from cookies
+  const cookieHeader = request.headers.get("cookie");
+  if (!cookieHeader) return null;
+
+  const cookies = cookieHeader.split(";").reduce((acc, cookie) => {
+    const [key, value] = cookie.trim().split("=");
+    if (key && value) acc[key] = value;
+    return acc;
+  }, {} as Record<string, string>);
+
+  const token = cookies["admin_token"];
+  if (!token) return null;
+
+  const payload = verifyAdminToken(token);
+  if (!payload || !payload.isAdmin) return null;
+
+  const users = await query<AdminUser[]>("SELECT * FROM admin_users WHERE id = ?", [payload.adminId]);
+  return users[0] || null;
+}
+
 // Settings Management
 export async function getSetting(key: string): Promise<string | null> {
   const settings = await query<AdminSetting[]>(

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentAdmin } from "@/lib/admin";
 import { query } from "@/lib/db";
+import { logAdminAction } from "@/lib/logging";
 
 interface Customer {
   id: string;
@@ -162,5 +163,101 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Customer details error:", error);
     return NextResponse.json({ error: "Failed to get customer details" }, { status: 500 });
+  }
+}
+
+// Update customer details
+export async function PUT(request: NextRequest) {
+  try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { customerId, ...updates } = body;
+
+    if (!customerId) {
+      return NextResponse.json({ error: "Customer ID required" }, { status: 400 });
+    }
+
+    // Build update query
+    const allowedFields = ["email", "business_name", "trade", "location", "phone", "services"];
+    const fields: string[] = [];
+    const values: unknown[] = [];
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (allowedFields.includes(key)) {
+        fields.push(`${key} = ?`);
+        values.push(value);
+      }
+    }
+
+    if (fields.length === 0) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+    }
+
+    values.push(customerId);
+    await query(`UPDATE users SET ${fields.join(", ")} WHERE id = ?`, values);
+
+    await logAdminAction(
+      "customer_updated",
+      String(admin.id),
+      `Updated customer ${customerId}`,
+      { customerId, updatedFields: Object.keys(updates).filter(k => allowedFields.includes(k)) }
+    );
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Update customer error:", error);
+    return NextResponse.json({ error: "Failed to update customer" }, { status: 500 });
+  }
+}
+
+// Update site status or details
+export async function PATCH(request: NextRequest) {
+  try {
+    const admin = await getCurrentAdmin();
+    if (!admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { siteId, ...updates } = body;
+
+    if (!siteId) {
+      return NextResponse.json({ error: "Site ID required" }, { status: 400 });
+    }
+
+    // Build update query
+    const allowedFields = ["status", "subdomain", "custom_domain"];
+    const fields: string[] = [];
+    const values: unknown[] = [];
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (allowedFields.includes(key)) {
+        fields.push(`${key} = ?`);
+        values.push(value);
+      }
+    }
+
+    if (fields.length === 0) {
+      return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+    }
+
+    values.push(siteId);
+    await query(`UPDATE sites SET ${fields.join(", ")} WHERE id = ?`, values);
+
+    await logAdminAction(
+      "site_updated",
+      String(admin.id),
+      `Updated site ${siteId}`,
+      { siteId, updatedFields: Object.keys(updates).filter(k => allowedFields.includes(k)) }
+    );
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Update site error:", error);
+    return NextResponse.json({ error: "Failed to update site" }, { status: 500 });
   }
 }
