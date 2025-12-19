@@ -38,23 +38,32 @@ sessions - id, user_id, token, expires_at, created_at
 │   │   ├── (marketing)/                # Features, pricing, about pages (TODO)
 │   │   │   └── industries/             # Trade-specific landing pages for FB ads (TODO)
 │   │   ├── dashboard/
-│   │   │   └── page.tsx                # Main dashboard with AI chat prompt
-│   │   └── api/auth/
-│   │       ├── signup/route.ts
-│   │       ├── login/route.ts
-│   │       ├── logout/route.ts
-│   │       └── me/route.ts
+│   │   │   ├── page.tsx                # Main editor with AI chat + preview
+│   │   │   ├── billing/page.tsx        # Stripe checkout + subscription management
+│   │   │   └── domains/page.tsx        # Domain connection + DNS setup
+│   │   └── api/
+│   │       ├── auth/                   # signup, login, logout, me
+│   │       ├── site/                   # generate, modify, load
+│   │       ├── stripe/                 # checkout, webhook, portal
+│   │       └── domains/                # suggest, check, connect
 │   ├── components/
 │   │   ├── marketing/
 │   │   │   ├── Header.tsx
 │   │   │   └── Footer.tsx
+│   │   ├── dashboard/
+│   │   │   └── SitePreview.tsx         # Renders site from config
 │   │   └── ui/
 │   │       └── Logo.tsx                # Eye/globe icon logo
 │   └── lib/
 │       ├── db.ts                       # MySQL connection pool
-│       └── auth.ts                     # Auth utilities (hash, verify, JWT)
-└── public/
-    └── logo.svg
+│       ├── auth.ts                     # Auth utilities (hash, verify, JWT)
+│       ├── ai.ts                       # Claude API for site generation
+│       ├── stripe.ts                   # Stripe checkout + portal
+│       └── cloudflare.ts               # Domain management
+├── public/
+│   └── logo.svg
+├── .env.local                          # Environment variables (not in git)
+└── .env.example                        # Template for env vars
 ```
 
 ## Completed Features
@@ -62,19 +71,21 @@ sessions - id, user_id, token, expires_at, created_at
 - [x] Header/Footer with logo
 - [x] 5-step signup wizard (trade → business info → services → existing sites → account)
 - [x] Login page
-- [x] Dashboard with AI chat prompt UI (placeholder)
 - [x] MySQL database with users/sites/sessions tables
 - [x] JWT auth system (signup, login, logout, get current user)
+- [x] **AI Site Builder** - Claude API integration for site generation and modification
+- [x] **Site Preview** - Live preview component with hero, services, about, testimonials, contact, CTA sections
+- [x] **Editor UI** - Full dashboard with sidebar, preview panel, and AI chat
+- [x] **Stripe Integration** - Checkout, webhooks, billing portal
+- [x] **Domain Management** - Cloudflare API, domain suggestions, DNS instructions
 - [x] GitHub repo: https://github.com/duncanpollard-gites/websights
 
 ## TODO - Next Steps
-1. **AI Site Builder** - The core product. User types "Add a testimonials section" → AI generates code
-2. **Industry Landing Pages** - /industries/plumbers, /electricians etc. for FB ad targeting
-3. **Stripe Integration** - £25/month subscription when going live
-4. **Domain Management** - Cloudflare API for domain registration/DNS
-5. **Email Setup** - Cloudflare Email Routing or Mailgun
-6. **Print API Integration** - Prodigi/Gelato for business cards, workwear, mugs
-7. **Site Hosting** - Deploy customer sites (Vercel API or static generation)
+1. **Industry Landing Pages** - /industries/plumbers, /electricians etc. for FB ad targeting
+2. **Email Setup** - Cloudflare Email Routing or Mailgun
+3. **Print API Integration** - Prodigi/Gelato for business cards, workwear, mugs
+4. **Site Hosting/Deployment** - Deploy customer sites (Vercel API or static generation)
+5. **Add real Claude API key** - Currently works in demo mode without key
 
 ## Key Features Planned
 - AI chat builder ("change the header to blue", "add a gallery")
