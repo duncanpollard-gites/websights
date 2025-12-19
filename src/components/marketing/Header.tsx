@@ -19,11 +19,14 @@ export default function Header() {
             <Link href="/features" className="text-gray-600 hover:text-gray-900 transition-colors">
               Features
             </Link>
+            <Link href="/logo" className="text-gray-600 hover:text-gray-900 transition-colors">
+              Logo Generator
+            </Link>
             <Link href="/pricing" className="text-gray-600 hover:text-gray-900 transition-colors">
               Pricing
             </Link>
-            <Link href="/about" className="text-gray-600 hover:text-gray-900 transition-colors">
-              About
+            <Link href="/demo" className="text-gray-600 hover:text-gray-900 transition-colors">
+              Demos
             </Link>
           </div>
 
@@ -80,11 +83,14 @@ export default function Header() {
               <Link href="/features" className="text-gray-600 hover:text-gray-900">
                 Features
               </Link>
+              <Link href="/logo" className="text-gray-600 hover:text-gray-900">
+                Logo Generator
+              </Link>
               <Link href="/pricing" className="text-gray-600 hover:text-gray-900">
                 Pricing
               </Link>
-              <Link href="/about" className="text-gray-600 hover:text-gray-900">
-                About
+              <Link href="/demo" className="text-gray-600 hover:text-gray-900">
+                Demos
               </Link>
               <hr className="border-gray-100" />
               <Link href="/login" className="text-gray-600 hover:text-gray-900">
