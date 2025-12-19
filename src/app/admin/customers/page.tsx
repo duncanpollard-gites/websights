@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Search,
   Filter,
@@ -17,6 +18,7 @@ import {
   CreditCard,
   Calendar,
   ExternalLink,
+  UserCog,
 } from "lucide-react";
 
 interface Customer {
@@ -63,6 +65,7 @@ interface Pagination {
 }
 
 export default function AdminCustomersPage() {
+  const router = useRouter();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [trades, setTrades] = useState<{ trade: string; count: number }[]>([]);
@@ -79,6 +82,13 @@ export default function AdminCustomersPage() {
   const [customerSites, setCustomerSites] = useState<Site[]>([]);
   const [modalLoading, setModalLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  // Impersonation
+  const [showImpersonateModal, setShowImpersonateModal] = useState(false);
+  const [impersonateUserId, setImpersonateUserId] = useState<string | null>(null);
+  const [impersonateUserEmail, setImpersonateUserEmail] = useState<string>("");
+  const [impersonateReason, setImpersonateReason] = useState("");
+  const [impersonating, setImpersonating] = useState(false);
 
   useEffect(() => {
     fetchCustomers();
@@ -137,6 +147,43 @@ export default function AdminCustomersPage() {
       month: "short",
       year: "numeric",
     });
+  };
+
+  const openImpersonateModal = (userId: string, email: string) => {
+    setImpersonateUserId(userId);
+    setImpersonateUserEmail(email);
+    setImpersonateReason("");
+    setShowImpersonateModal(true);
+  };
+
+  const startImpersonation = async () => {
+    if (!impersonateUserId) return;
+
+    setImpersonating(true);
+    try {
+      const response = await fetch("/api/admin/impersonate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId: impersonateUserId,
+          reason: impersonateReason || "Admin review",
+        }),
+      });
+
+      if (response.ok) {
+        // Redirect to user's dashboard
+        router.push("/dashboard");
+      } else {
+        const data = await response.json();
+        alert(data.error || "Failed to start impersonation");
+      }
+    } catch (error) {
+      console.error("Impersonation error:", error);
+      alert("Failed to start impersonation");
+    } finally {
+      setImpersonating(false);
+      setShowImpersonateModal(false);
+    }
   };
 
   const getStatusBadge = (customer: Customer) => {
@@ -281,12 +328,22 @@ export default function AdminCustomersPage() {
                       {formatDate(customer.created_at)}
                     </td>
                     <td className="p-4">
-                      <button
-                        onClick={() => viewCustomer(customer.id)}
-                        className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => viewCustomer(customer.id)}
+                          className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                          title="View details"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => openImpersonateModal(customer.id, customer.email)}
+                          className="p-2 text-gray-400 hover:text-yellow-400 hover:bg-yellow-900/30 rounded-lg transition-colors"
+                          title="Impersonate user"
+                        >
+                          <UserCog className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -414,18 +471,30 @@ export default function AdminCustomersPage() {
                   </div>
                 )}
 
-                {/* Stripe Link */}
-                {selectedCustomer.stripe_customer_id && (
-                  <a
-                    href={`https://dashboard.stripe.com/customers/${selectedCustomer.stripe_customer_id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm"
+                {/* Action Buttons */}
+                <div className="flex flex-wrap gap-3">
+                  {selectedCustomer.stripe_customer_id && (
+                    <a
+                      href={`https://dashboard.stripe.com/customers/${selectedCustomer.stripe_customer_id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-700 text-gray-300 hover:bg-gray-600 rounded-lg text-sm transition-colors"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      View in Stripe
+                    </a>
+                  )}
+                  <button
+                    onClick={() => {
+                      setShowModal(false);
+                      openImpersonateModal(selectedCustomer.id, selectedCustomer.email);
+                    }}
+                    className="flex items-center gap-2 px-4 py-2 bg-yellow-600 text-white hover:bg-yellow-700 rounded-lg text-sm transition-colors"
                   >
-                    View in Stripe
-                    <ExternalLink className="w-4 h-4" />
-                  </a>
-                )}
+                    <UserCog className="w-4 h-4" />
+                    Impersonate User
+                  </button>
+                </div>
 
                 {/* Sites */}
                 <div>
@@ -471,6 +540,68 @@ export default function AdminCustomersPage() {
                 Customer not found
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Impersonation Confirmation Modal */}
+      {showImpersonateModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-800 rounded-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-700">
+              <h2 className="text-xl font-bold text-white">Impersonate User</h2>
+              <p className="text-gray-400 text-sm mt-1">
+                You will be logged in as this user and can make changes on their behalf.
+              </p>
+            </div>
+
+            <div className="p-6 space-y-4">
+              <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-4">
+                <p className="text-yellow-400 text-sm">
+                  <strong>Warning:</strong> All actions will be logged. You are about to impersonate:
+                </p>
+                <p className="text-white font-medium mt-2">{impersonateUserEmail}</p>
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-400 mb-2">
+                  Reason for impersonation (optional)
+                </label>
+                <input
+                  type="text"
+                  value={impersonateReason}
+                  onChange={(e) => setImpersonateReason(e.target.value)}
+                  placeholder="e.g., Customer support request, debugging issue..."
+                  className="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  onClick={() => setShowImpersonateModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={startImpersonation}
+                  disabled={impersonating}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors disabled:opacity-50"
+                >
+                  {impersonating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Starting...
+                    </>
+                  ) : (
+                    <>
+                      <UserCog className="w-4 h-4" />
+                      Start Impersonation
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
