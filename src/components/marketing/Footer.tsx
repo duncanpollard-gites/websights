@@ -7,14 +7,19 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* Company */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">W</span>
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 relative">
+                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="20" cy="20" r="16" stroke="#3b82f6" strokeWidth="2.5" fill="none"/>
+                  <circle cx="20" cy="20" r="6" fill="#3b82f6"/>
+                  <ellipse cx="20" cy="20" rx="16" ry="8" stroke="#3b82f6" strokeWidth="1.5" fill="none"/>
+                  <line x1="20" y1="4" x2="20" y2="36" stroke="#3b82f6" strokeWidth="1.5"/>
+                </svg>
               </div>
               <span className="text-xl font-bold text-white">WebSights</span>
-            </div>
+            </Link>
             <p className="text-sm text-gray-400">
-              Professional websites for tradespeople, built in minutes.
+              Professional websites for tradespeople, built in minutes. Since 1997.
             </p>
           </div>
 
